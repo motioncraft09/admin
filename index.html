@@ -1,1227 +1,662 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>স্বাদের রাজ্য - অ্যাডমিন প্যানেল</title>
+    <title>MotionCraft Client Portal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --gray: #6b7280;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --info: #3b82f6;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
-        
+
         body {
-            font-family: 'Hind Siliguri', sans-serif;
-            background: #f0f2f5;
-            color: #333;
+            background-color: #f5f7fa;
+            color: var(--dark);
             line-height: 1.6;
-            overflow-x: hidden;
         }
-        
-        .admin-container {
-            display: flex;
-            min-height: 100vh;
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
-        
-        .sidebar {
-            width: 250px;
-            background: #5a2a27;
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
-            padding: 20px 0;
-            box-shadow: 3px 0 10px rgba(0,0,0,0.1);
-            position: fixed;
-            height: 100vh;
-            z-index: 100;
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
         .logo {
-            text-align: center;
-            padding: 20px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 20px;
-        }
-        
-        .logo h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             font-size: 1.5rem;
             font-weight: 700;
         }
-        
-        .nav-links {
+
+        .logo i {
+            font-size: 1.8rem;
+        }
+
+        nav ul {
+            display: flex;
             list-style: none;
-            padding: 0 15px;
+            gap: 2rem;
         }
-        
-        .nav-links li {
-            margin-bottom: 5px;
-        }
-        
-        .nav-links a {
-            display: flex;
-            align-items: center;
-            padding: 12px 15px;
-            color: rgba(255,255,255,0.8);
+
+        nav a {
+            color: white;
             text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.3s ease;
+            font-weight: 500;
+            transition: opacity 0.3s;
         }
-        
-        .nav-links a:hover, .nav-links a.active {
-            background: rgba(255,255,255,0.1);
+
+        nav a:hover {
+            opacity: 0.8;
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid white;
             color: white;
         }
-        
-        .nav-links i {
-            margin-right: 12px;
-            font-size: 1.2rem;
+
+        .btn-outline:hover {
+            background: white;
+            color: var(--primary);
         }
-        
+
+        /* Main Content */
         .main-content {
+            padding: 2rem 0;
+        }
+
+        .welcome-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .welcome-section h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .welcome-section p {
+            color: var(--gray);
+            margin-bottom: 1rem;
+        }
+
+        /* Search Section */
+        .search-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .search-container {
+            display: flex;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .search-input {
             flex: 1;
-            margin-left: 250px;
-            padding: 20px;
-            background: #f8f5f2;
-        }
-        
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            margin-bottom: 25px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        
-        .header h1 {
-            font-size: 1.8rem;
-            color: #5a2a27;
-            font-weight: 700;
-        }
-        
-        .notification-bell {
-            position: relative;
-            cursor: pointer;
-            font-size: 1.3rem;
-            color: #5a2a27;
-        }
-        
-        .notification-count {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #e74c3c;
-            color: white;
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: 700;
-        }
-        
-        .dashboard-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        }
-        
-        .card-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .card-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            font-size: 1.4rem;
-        }
-        
-        .card-icon.order {
-            background: rgba(231, 76, 60, 0.15);
-            color: #e74c3c;
-        }
-        
-        .card-icon.menu {
-            background: rgba(52, 152, 219, 0.15);
-            color: #3498db;
-        }
-        
-        .card-icon.rating {
-            background: rgba(155, 89, 182, 0.15);
-            color: #9b59b6;
-        }
-        
-        .card-title {
+            padding: 0.75rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px 0 0 6px;
             font-size: 1rem;
-            color: #7e7e7e;
         }
-        
-        .card-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #5a2a27;
-        }
-        
-        .tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        
-        .tab {
-            padding: 12px 25px;
-            cursor: pointer;
-            font-weight: 600;
-            color: #7e7e7e;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
-        }
-        
-        .tab.active {
-            color: #5a2a27;
-            border-bottom: 3px solid #e74c3c;
-        }
-        
-        .content-section {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
-            display: none;
-        }
-        
-        .content-section.active {
-            display: block;
-        }
-        
-        .section-title {
-            font-size: 1.4rem;
-            color: #5a2a27;
-            margin-bottom: 20px;
-            font-weight: 700;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .orders-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .orders-table th {
-            background: #f8f5f2;
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-            color: #5a2a27;
-            border-bottom: 2px solid #e0e0e0;
-        }
-        
-        .orders-table td {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .order-id {
-            font-weight: 700;
-            color: #3498db;
-        }
-        
-        .order-items {
-            max-width: 250px;
-        }
-        
-        .order-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 5px 0;
-            border-bottom: 1px dashed #eee;
-        }
-        
-        .order-item:last-child {
-            border-bottom: none;
-        }
-        
-        .order-status {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-        
-        .status-pending {
-            background: rgba(241, 196, 15, 0.2);
-            color: #f39c12;
-        }
-        
-        .status-preparing {
-            background: rgba(52, 152, 219, 0.2);
-            color: #3498db;
-        }
-        
-        .status-ready {
-            background: rgba(46, 204, 113, 0.2);
-            color: #27ae60;
-        }
-        
-        .status-completed {
-            background: rgba(149, 165, 166, 0.2);
-            color: #7f8c8d;
-        }
-        
-        .action-btn {
-            padding: 8px 15px;
-            border: none;
-            border-radius: 8px;
-            font-family: 'Hind Siliguri', sans-serif;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-prepare {
-            background: #3498db;
-            color: white;
-        }
-        
-        .btn-ready {
-            background: #2ecc71;
-            color: white;
-        }
-        
-        .btn-complete {
-            background: #7f8c8d;
-            color: white;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #5a2a27;
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-family: 'Hind Siliguri', sans-serif;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: #e74c3c;
-            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
-        }
-        
-        textarea.form-control {
-            min-height: 120px;
-            resize: vertical;
-        }
-        
-        .submit-btn {
-            background: #e74c3c;
+
+        .search-btn {
+            background: var(--primary);
             color: white;
             border: none;
-            padding: 14px 25px;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
+            padding: 0 1.5rem;
+            border-radius: 0 6px 6px 0;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Hind Siliguri', sans-serif;
+            transition: background 0.3s;
         }
-        
-        .submit-btn:hover {
-            background: #c0392b;
-            transform: translateY(-2px);
+
+        .search-btn:hover {
+            background: var(--primary-dark);
         }
-        
-        .sound-controls {
-            display: flex;
-            gap: 15px;
-            margin-top: 25px;
-            padding-top: 25px;
-            border-top: 1px solid #eee;
-        }
-        
-        .sound-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 15px;
-            background: #f8f5f2;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: 'Hind Siliguri', sans-serif;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        
-        .sound-btn.active {
-            background: #e74c3c;
-            color: white;
-        }
-        
-        .kitchen-grid {
+
+        /* Client Cards */
+        .clients-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            gap: 1.5rem;
         }
-        
-        .kitchen-card {
+
+        .client-card {
             background: white;
             border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            border-left: 4px solid #f39c12;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
         }
-        
-        .kitchen-card.ready {
-            border-left-color: #2ecc71;
+
+        .client-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
         }
-        
-        .kitchen-card.completed {
-            border-left-color: #7f8c8d;
-        }
-        
-        .kitchen-header {
+
+        .client-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
             display: flex;
             justify-content: space-between;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
+            align-items: center;
         }
-        
-        .kitchen-order-id {
-            font-weight: 700;
-            color: #5a2a27;
+
+        .client-name {
+            font-weight: 600;
+            font-size: 1.2rem;
         }
-        
-        .kitchen-time {
-            color: #7e7e7e;
+
+        .project-id {
+            color: var(--gray);
             font-size: 0.9rem;
         }
-        
-        .kitchen-items {
-            margin-bottom: 20px;
+
+        .client-body {
+            padding: 1.5rem;
         }
-        
-        .kitchen-item {
+
+        .status-list {
+            list-style: none;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .status-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .status-details {
+            flex-grow: 1;
+        }
+
+        .status-title {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .status-value {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .completed {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .in-progress {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+        }
+
+        .pending {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .upcoming {
+            background-color: rgba(107, 114, 128, 0.1);
+            color: var(--gray);
+        }
+
+        .delivery-section {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .delivery-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .delivery-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .delivery-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            background: #f9fafb;
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--dark);
+            transition: background 0.3s;
+        }
+
+        .delivery-link:hover {
+            background: #e5e7eb;
+        }
+
+        .link-icon {
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
+        }
+
+        .link-text {
+            flex: 1;
+        }
+
+        .link-arrow {
+            color: var(--primary);
+        }
+
+        .client-footer {
+            padding: 1rem 1.5rem;
+            background: #f9fafb;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .error-message {
+            color: var(--danger);
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
+            align-items: center;
         }
-        
-        .kitchen-actions {
+
+        .footer-links {
             display: flex;
-            gap: 10px;
+            gap: 1.5rem;
         }
-        
-        @media (max-width: 992px) {
-            .sidebar {
-                width: 70px;
-            }
-            
-            .logo h2, .nav-text {
-                display: none;
-            }
-            
-            .nav-links a {
-                justify-content: center;
-                padding: 15px;
-            }
-            
-            .nav-links i {
-                margin-right: 0;
-                font-size: 1.4rem;
-            }
-            
-            .main-content {
-                margin-left: 70px;
-            }
+
+        .footer-links a {
+            color: #d1d5db;
+            text-decoration: none;
+            transition: color 0.3s;
         }
-        
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .dashboard-cards {
-                grid-template-columns: 1fr;
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
             }
             
-            .orders-table {
-                display: block;
-                overflow-x: auto;
+            nav ul {
+                gap: 1rem;
             }
             
-            .kitchen-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .header h1 {
-                font-size: 1.4rem;
-            }
-            
-            .tabs {
-                flex-wrap: wrap;
-            }
-            
-            .tab {
-                padding: 10px 15px;
-                font-size: 0.9rem;
-            }
-            
-            .kitchen-actions {
+            .search-container {
                 flex-direction: column;
             }
-        }
-        
-        @keyframes highlight {
-            0% { background-color: rgba(231, 76, 60, 0.1); }
-            50% { background-color: rgba(231, 76, 60, 0.3); }
-            100% { background-color: transparent; }
-        }
-        
-        .new-order {
-            animation: highlight 2s ease;
-        }
-        
-        .kitchen-notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #2ecc71;
-            color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transform: translateX(120%);
-            transition: transform 0.5s ease;
-            z-index: 1000;
-        }
-        
-        .kitchen-notification.show {
-            transform: translateX(0);
+            
+            .search-input {
+                border-radius: 6px;
+                margin-bottom: 1rem;
+            }
+            
+            .search-btn {
+                border-radius: 6px;
+                padding: 0.75rem;
+            }
+            
+            .clients-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .footer-links {
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="admin-container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="logo">
-                <h2>স্বাদের রাজ্য</h2>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-film"></i>
+                    <span>MotionCraft</span>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#">Dashboard</a></li>
+                        <li><a href="#">Projects</a></li>
+                        <li><a href="#">Messages</a></li>
+                        <li><a href="#">Documents</a></li>
+                    </ul>
+                </nav>
+                <div class="user-actions">
+                    <button class="btn btn-outline">Log Out</button>
+                </div>
             </div>
-            <ul class="nav-links">
-                <li>
-                    <a href="#" class="active" data-tab="dashboard">
-                        <i class="fas fa-chart-line"></i>
-                        <span class="nav-text">ড্যাশবোর্ড</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" data-tab="orders">
-                        <i class="fas fa-list-alt"></i>
-                        <span class="nav-text">অর্ডারসমূহ</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" data-tab="kitchen">
-                        <i class="fas fa-utensils"></i>
-                        <span class="nav-text">রান্নাঘর</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" data-tab="menu">
-                        <i class="fas fa-book"></i>
-                        <span class="nav-text">মেনু ব্যবস্থাপনা</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" data-tab="settings">
-                        <i class="fas fa-cog"></i>
-                        <span class="nav-text">সেটিংস</span>
-                    </a>
-                </li>
-            </ul>
         </div>
-        
-        <!-- Main Content -->
+    </header>
+
+    <main class="container">
         <div class="main-content">
-            <div class="header">
-                <h1>অ্যাডমিন প্যানেল</h1>
-                <div class="notification-bell" id="notificationBell">
-                    <i class="fas fa-bell"></i>
-                    <span class="notification-count" id="notificationCount">0</span>
-                </div>
+            <div class="welcome-section">
+                <h1>Client Project Portal</h1>
+                <p>Track the status of your project by entering your client code below</p>
             </div>
-            
-            <!-- Dashboard Cards -->
-            <div class="dashboard-cards">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-icon order">
-                            <i class="fas fa-shopping-bag"></i>
-                        </div>
-                        <div>
-                            <div class="card-title">সক্রিয় অর্ডার</div>
-                            <div class="card-value" id="activeOrders">0</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-icon menu">
-                            <i class="fas fa-utensils"></i>
-                        </div>
-                        <div>
-                            <div class="card-title">মেনু আইটেম</div>
-                            <div class="card-value" id="menuItemsCount">0</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-icon rating">
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <div>
-                            <div class="card-title">গড় রেটিং</div>
-                            <div class="card-value">4.7/5</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Tabs -->
-            <div class="tabs">
-                <div class="tab active" data-tab="orders">সক্রিয় অর্ডারসমূহ</div>
-                <div class="tab" data-tab="pending">প্রস্তুত হচ্ছে</div>
-                <div class="tab" data-tab="ready">পরিবেশনের জন্য প্রস্তুত</div>
-            </div>
-            
-            <!-- Orders Section -->
-            <div class="content-section active" id="ordersSection">
-                <h2 class="section-title">সর্বশেষ অর্ডারসমূহ</h2>
-                
-                <table class="orders-table">
-                    <thead>
-                        <tr>
-                            <th>অর্ডার আইডি</th>
-                            <th>আইটেমসমূহ</th>
-                            <th>মোট মূল্য</th>
-                            <th>স্ট্যাটাস</th>
-                            <th>সময়</th>
-                            <th>অ্যাকশন</th>
-                        </tr>
-                    </thead>
-                    <tbody id="ordersTableBody">
-                        <!-- Orders will be populated here -->
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- Kitchen Section -->
-            <div class="content-section" id="kitchenSection">
-                <h2 class="section-title">রান্নাঘর ব্যবস্থাপনা</h2>
-                
-                <div class="kitchen-grid" id="kitchenGrid">
-                    <!-- Kitchen cards will be populated here -->
-                </div>
-            </div>
-            
-            <!-- Add Menu Item Section -->
-            <div class="content-section" id="menuSection">
-                <h2 class="section-title">নতুন মেনু আইটেম যোগ করুন</h2>
-                
-                <form id="menuForm">
-                    <div class="form-group">
-                        <label class="form-label">আইটেমের নাম</label>
-                        <input type="text" class="form-control" id="itemName" placeholder="চিকেন বিরিয়ানি" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">সংক্ষিপ্ত বর্ণনা</label>
-                        <input type="text" class="form-control" id="itemDesc" placeholder="সুগন্ধি বাসমতী চালের সাথে মসলাদার চিকেন" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">বিস্তারিত বর্ণনা (বাংলা)</label>
-                        <textarea class="form-control" id="banglaDesc" placeholder="বিস্তারিত বর্ণনা লিখুন..." required></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">মূল্য (৳)</label>
-                        <input type="number" class="form-control" id="itemPrice" placeholder="350" min="0" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">ছবির URL</label>
-                        <input type="url" class="form-control" id="itemImage" placeholder="https://example.com/image.jpg" required>
-                    </div>
-                    
-                    <button type="submit" class="submit-btn">
-                        <i class="fas fa-plus"></i> আইটেম যোগ করুন
+
+            <div class="search-section">
+                <h2>Access Your Project</h2>
+                <p>Enter your client code to view your project status and deliverables</p>
+                <div class="search-container">
+                    <input type="text" class="search-input" id="clientCodeInput" placeholder="Enter your client code (e.g. MC-4821)">
+                    <button class="search-btn" id="searchBtn">
+                        <i class="fas fa-search"></i>
                     </button>
-                </form>
-                
-                <div class="current-menu" style="margin-top: 40px;">
-                    <h2 class="section-title">বর্তমান মেনু আইটেমসমূহ</h2>
-                    <div id="currentMenuItems" style="margin-top: 20px;">
-                        <!-- Current menu items will be listed here -->
-                    </div>
                 </div>
+                <div id="errorMessage" class="error-message hidden"></div>
             </div>
-            
-            <!-- Settings Section -->
-            <div class="content-section" id="settingsSection">
-                <h2 class="section-title">সেটিংস</h2>
-                
-                <div class="form-group">
-                    <label class="form-label">নোটিফিকেশন সাউন্ড</label>
-                    <div class="sound-controls">
-                        <button class="sound-btn active" data-sound="bell">
-                            <i class="fas fa-bell"></i> বেল
-                        </button>
-                        <button class="sound-btn" data-sound="beep">
-                            <i class="fas fa-wave-square"></i> বিপ
-                        </button>
-                        <button class="sound-btn" data-sound="ding">
-                            <i class="fas fa-bell"></i> ডিং
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">নোটিফিকেশন ভলিউম</label>
-                    <input type="range" class="form-control" id="volumeControl" min="0" max="100" value="80">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">অটো রিফ্রেশ ইন্টারভাল (সেকেন্ড)</label>
-                    <input type="number" class="form-control" id="refreshInterval" value="30" min="5" max="120">
-                </div>
-                
-                <button class="submit-btn" id="saveSettings">
-                    <i class="fas fa-save"></i> সেটিংস সংরক্ষণ করুন
-                </button>
+
+            <div id="clientContainer" class="hidden">
+                <!-- Client content will be inserted here dynamically -->
             </div>
         </div>
-    </div>
-    
-    <!-- Kitchen Notification -->
-    <div class="kitchen-notification" id="kitchenNotification">
-        <i class="fas fa-check-circle"></i> নতুন অর্ডার যোগ করা হয়েছে!
-    </div>
-    
-    <!-- Audio for notifications -->
-    <audio id="notificationSound" preload="auto">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3" type="audio/mpeg">
-    </audio>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="copyright">
+                    &copy; 2023 MotionCraft. All rights reserved.
+                </div>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Contact Us</a>
+                    <a href="#">Support</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script>
-        // Load orders from localStorage
-        let orders = JSON.parse(localStorage.getItem('orders')) || [];
-        
-        // Load menu items from localStorage
-        let menuItems = JSON.parse(localStorage.getItem('menuItems')) || [
-            {
-                id: 1,
-                name: "চিকেন বিরিয়ানি",
-                description: "সুগন্ধি বাসমতী চালের সাথে মসলাদার চিকেন এবং বিশেষ মশলা",
-                price: 350,
-                image: "https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=880&q=80",
-                banglaDesc: "চিকেন বিরিয়ানি বাংলাদেশের সবচেয়ে জনপ্রিয় খাবারের মধ্যে একটি। এই বিরিয়ানি তৈরি করা হয় সুগন্ধি বাসমতী চাল, টুকরো টুকরো মুরগির মাংস, এবং বিভিন্ন ধরনের মসলা দিয়ে। এটি ধনিয়া পাতা, পুদিনা পাতা, জাফরান, এলাচ, দারুচিনি এবং লবঙ্গের সুগন্ধে ভরপুর। বিরিয়ানি রান্নার বিশেষ পদ্ধতির জন্য এর স্বাদ অতুলনীয়। সাধারণত এটি রায়তা, বোরহানি বা সালাদের সাথে পরিবেশন করা হয়।"
+        // Project data
+        const projects = {
+            "MC-4821": {
+                name: "NexTech Solutions",
+                id: "MC-4821",
+                status: [
+                    { title: "Script Writing", value: "Completed on Aug 12, 2023", icon: "✅", status: "completed" },
+                    { title: "Video Editing", value: "Expected completion: Aug 25, 2023", icon: "🔄", status: "in-progress" },
+                    { title: "Client Feedback", value: "Awaiting client review", icon: "⏳", status: "pending" },
+                    { title: "Final Delivery", value: "Scheduled for Sep 5, 2023", icon: "❌", status: "upcoming" }
+                ],
+                deliveryLinks: [
+                    { text: "Storyboard PDF", url: "#", icon: "📄" },
+                    { text: "Script Document", url: "#", icon: "📝" },
+                    { text: "Preview Video", url: "#", icon: "🎬" },
+                    { text: "Raw Footage (Available after editing)", url: "#", icon: "🎥", disabled: true }
+                ]
             },
-            {
-                id: 2,
-                name: "বিফ কালা ভুনা",
-                description: "বিশেষ মসলা দিয়ে আস্তে আস্তে রান্না করা গরুর মাংস",
-                price: 420,
-                image: "https://images.unsplash.com/photo-1603360946369-dc9bbd814103?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1035&q=80",
-                banglaDesc: "বিফ কালা ভুনা চট্টগ্রামের একটি ঐতিহ্যবাহী খাবার। এই পদটি তৈরি করা হয় গরুর মাংসকে ধীরে ধীরে রান্না করে বিশেষ মসলার মিশ্রণে, যাতে মাংস নরম হয় এবং মসলার স্বাদ গভীরভাবে প্রবেশ করে। প্রধান মসলার মধ্যে রয়েছে পিঁয়াজ, রসুন, আদা, শুকনা মরিচ, ধনিয়া গুঁড়ো, জিরা গুঁড়ো এবং গরম মসলা। কালা ভুনার নামকরণ হয়েছে এর গাঢ় বর্ণের কারণে, যা আসে কড়া ভাজা পিঁয়াজ থেকে। এটি সাধারণত ভাত বা রুটির সাথে পরিবেশন করা হয়।"
+            "MC-4756": {
+                name: "EcoLife Brands",
+                id: "MC-4756",
+                status: [
+                    { title: "Script Writing", value: "Completed on Jul 28, 2023", icon: "✅", status: "completed" },
+                    { title: "Video Editing", value: "Completed on Aug 15, 2023", icon: "✅", status: "completed" },
+                    { title: "Client Feedback", value: "Revision in progress", icon: "🔄", status: "in-progress" },
+                    { title: "Final Delivery", value: "Scheduled for Aug 30, 2023", icon: "❌", status: "upcoming" }
+                ],
+                deliveryLinks: [
+                    { text: "Initial Concepts", url: "#", icon: "💡" },
+                    { text: "Script Final", url: "#", icon: "📝" },
+                    { text: "Animation Preview", url: "#", icon: "✨" }
+                ]
             },
-            {
-                id: 3,
-                name: "ইলিশ মাছের ভাপা",
-                description: "সরিষা ও নারকেলের ঝোল দিয়ে রান্না করা বাংলাদেশের জাতীয় মাছ",
-                price: 550,
-                image: "https://images.unsplash.com/photo-1606491956689-2ea866880c84?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1921&q=80",
-                banglaDesc: "ইলিশ মাছ বাংলাদেশের জাতীয় মাছ এবং ইলিশের ভাপা একটি জনপ্রিয় খাবার। এই পদটি তৈরি করা হয় সরিষা বাটা, সবুজ মরিচ, নারকেলের দুধ এবং বিভিন্ন মসলা দিয়ে। মাছটিকে প্রথমে ভাপে সিদ্ধ করা হয় যাতে এর কোমলতা বজায় থাকে। ইলিশ ভাপার স্বাদ টক-ঝাল-মিষ্টির এক অপূর্ব সমন্বয়। এটি সাধারণত গরম ভাতের সাথে পরিবেশন করা হয়। বর্ষাকালে যখন ইলিশ মাছের প্রাচুর্য থাকে, তখন এই খাবারটি বিশেষভাবে জনপ্রিয়।"
+            "MC-4902": {
+                name: "UrbanFit Gym",
+                id: "MC-4902",
+                status: [
+                    { title: "Script Writing", value: "Completed on Aug 5, 2023", icon: "✅", status: "completed" },
+                    { title: "Video Editing", value: "Completed on Aug 18, 2023", icon: "✅", status: "completed" },
+                    { title: "Client Feedback", value: "Approved on Aug 20, 2023", icon: "✅", status: "completed" },
+                    { title: "Final Delivery", value: "Preparing delivery package", icon: "🔄", status: "in-progress" }
+                ],
+                deliveryLinks: [
+                    { text: "Final Video", url: "#", icon: "🎬" },
+                    { text: "Social Media Clips", url: "#", icon: "📱" },
+                    { text: "Project Assets", url: "#", icon: "📦" }
+                ]
             }
-        ];
+        };
 
-        // Save menu items to localStorage
-        function saveMenuItems() {
-            localStorage.setItem('menuItems', JSON.stringify(menuItems));
-        }
-        
-        // Save orders to localStorage
-        function saveOrders() {
-            localStorage.setItem('orders', JSON.stringify(orders));
-        }
-        
-        // Initialize with saved items
-        saveMenuItems();
-        saveOrders();
+        // DOM elements
+        const clientCodeInput = document.getElementById('clientCodeInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const clientContainer = document.getElementById('clientContainer');
 
-        // DOM Elements
-        const navLinks = document.querySelectorAll('.nav-links a');
-        const tabs = document.querySelectorAll('.tab');
-        const contentSections = document.querySelectorAll('.content-section');
-        const ordersTableBody = document.getElementById('ordersTableBody');
-        const kitchenGrid = document.getElementById('kitchenGrid');
-        const notificationBell = document.getElementById('notificationBell');
-        const notificationCount = document.getElementById('notificationCount');
-        const notificationSound = document.getElementById('notificationSound');
-        const menuForm = document.getElementById('menuForm');
-        const soundBtns = document.querySelectorAll('.sound-btn');
-        const volumeControl = document.getElementById('volumeControl');
-        const refreshInterval = document.getElementById('refreshInterval');
-        const saveSettings = document.getElementById('saveSettings');
-        const kitchenNotification = document.getElementById('kitchenNotification');
-        const activeOrdersEl = document.getElementById('activeOrders');
-        const menuItemsCountEl = document.getElementById('menuItemsCount');
-        const currentMenuItems = document.getElementById('currentMenuItems');
-
-        // State
-        let notificationCounter = 0;
-        let activeTab = "orders";
-        let activeOrdersCount = orders.filter(order => order.status !== 'completed').length;
-
-        // Initialize the orders table
-        function initOrdersTable() {
-            ordersTableBody.innerHTML = '';
-            
-            const filteredOrders = orders.filter(order => {
-                if (activeTab === "orders") return true;
-                if (activeTab === "pending") return order.status === "pending";
-                if (activeTab === "ready") return order.status === "ready";
-                return true;
-            });
-            
-            filteredOrders.forEach(order => {
-                const row = document.createElement('tr');
-                if (order.new) {
-                    row.classList.add('new-order');
-                    order.new = false; // Reset after showing once
-                }
-                
-                row.innerHTML = `
-                    <td class="order-id">${order.id}</td>
-                    <td class="order-items">
-                        ${order.items.map(item => `
-                            <div class="order-item">
-                                <span>${item.name} × ${item.quantity || 1}</span>
-                                <span>৳${(item.price * (item.quantity || 1))}</span>
-                            </div>
-                        `).join('')}
-                    </td>
-                    <td><strong>৳${order.total}</strong></td>
-                    <td>
-                        <span class="order-status status-${order.status}">
-                            ${getStatusText(order.status)}
-                        </span>
-                    </td>
-                    <td>${order.time}</td>
-                    <td>
-                        ${order.status === "pending" ? 
-                            `<button class="action-btn btn-prepare" data-id="${order.id}">প্রস্তুত শুরু</button>` : 
-                         order.status === "preparing" ? 
-                            `<button class="action-btn btn-ready" data-id="${order.id}">প্রস্তুত হয়েছে</button>` : 
-                         order.status === "ready" ? 
-                            `<button class="action-btn btn-complete" data-id="${order.id}">পরিবেশন করা হয়েছে</button>` : 
-                         ''}
-                    </td>
-                `;
-                
-                ordersTableBody.appendChild(row);
-            });
-            
-            // Add event listeners to action buttons
-            document.querySelectorAll('.btn-prepare').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const orderId = btn.getAttribute('data-id');
-                    updateOrderStatus(orderId, 'preparing');
-                });
-            });
-            
-            document.querySelectorAll('.btn-ready').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const orderId = btn.getAttribute('data-id');
-                    updateOrderStatus(orderId, 'ready');
-                });
-            });
-            
-            document.querySelectorAll('.btn-complete').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const orderId = btn.getAttribute('data-id');
-                    updateOrderStatus(orderId, 'completed');
-                });
-            });
-        }
-        
-        // Initialize the kitchen view
-        function initKitchenView() {
-            kitchenGrid.innerHTML = '';
-            
-            const kitchenOrders = orders.filter(order => 
-                order.status === "pending" || 
-                order.status === "preparing" || 
-                order.status === "ready"
-            );
-            
-            kitchenOrders.forEach(order => {
-                const card = document.createElement('div');
-                card.className = `kitchen-card ${order.status === 'ready' ? 'ready' : ''}`;
-                
-                card.innerHTML = `
-                    <div class="kitchen-header">
-                        <div class="kitchen-order-id">${order.id}</div>
-                        <div class="kitchen-time">${order.time}</div>
-                    </div>
-                    <div class="kitchen-items">
-                        ${order.items.map(item => `
-                            <div class="kitchen-item">
-                                <span>${item.name} × ${item.quantity || 1}</span>
-                                <span>৳${item.price * (item.quantity || 1)}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                    <div class="kitchen-status">
-                        <span class="order-status status-${order.status}">
-                            ${getStatusText(order.status)}
-                        </span>
-                    </div>
-                    <div class="kitchen-actions">
-                        ${order.status === "pending" ? 
-                            `<button class="action-btn btn-prepare" data-id="${order.id}">প্রস্তুত শুরু</button>` : 
-                         order.status === "preparing" ? 
-                            `<button class="action-btn btn-ready" data-id="${order.id}">প্রস্তুত হয়েছে</button>` : 
-                         order.status === "ready" ? 
-                            `<button class="action-btn btn-complete" data-id="${order.id}">পরিবেশন করা হয়েছে</button>` : 
-                         ''}
-                    </div>
-                `;
-                
-                kitchenGrid.appendChild(card);
-                
-                // Add event listeners to action buttons
-                card.querySelectorAll('.btn-prepare, .btn-ready, .btn-complete').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const orderId = btn.getAttribute('data-id');
-                        const newStatus = 
-                            btn.classList.contains('btn-prepare') ? 'preparing' :
-                            btn.classList.contains('btn-ready') ? 'ready' : 'completed';
-                        
-                        updateOrderStatus(orderId, newStatus);
-                    });
-                });
-            });
-        }
-        
-        // Show current menu items
-        function showCurrentMenuItems() {
-            currentMenuItems.innerHTML = '';
-            
-            menuItems.forEach(item => {
-                const menuItem = document.createElement('div');
-                menuItem.className = 'menu-item-display';
-                menuItem.style = "background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; display: flex; align-items: center;";
-                
-                menuItem.innerHTML = `
-                    <div style="width: 80px; height: 80px; background-image: url('${item.image}'); background-size: cover; background-position: center; border-radius: 8px; margin-right: 15px;"></div>
-                    <div style="flex: 1;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                            <h3 style="font-weight: 600; color: #5a2a27;">${item.name}</h3>
-                            <div style="font-weight: 700; color: #e74c3c;">৳${item.price}</div>
-                        </div>
-                        <p style="color: #7e7e7e; margin-bottom: 5px; font-size: 0.9rem;">${item.description}</p>
-                        <button class="action-btn" style="background: #e74c3c; padding: 5px 10px; font-size: 0.8rem;" data-id="${item.id}">
-                            <i class="fas fa-trash"></i> মুছুন
-                        </button>
-                    </div>
-                `;
-                
-                currentMenuItems.appendChild(menuItem);
-                
-                // Add delete event
-                menuItem.querySelector('button').addEventListener('click', () => {
-                    if(confirm(`আপনি কি "${item.name}" মুছে ফেলতে চান?`)) {
-                        menuItems = menuItems.filter(mi => mi.id !== item.id);
-                        saveMenuItems();
-                        showCurrentMenuItems();
-                        updateMenuItemsCount();
-                        showNotification(`"${item.name}" মেনু থেকে মুছে ফেলা হয়েছে`);
-                    }
-                });
-            });
-        }
-        
-        // Update menu items count
-        function updateMenuItemsCount() {
-            menuItemsCountEl.textContent = menuItems.length;
-        }
-        
-        // Update active orders count
-        function updateActiveOrdersCount() {
-            activeOrdersCount = orders.filter(order => order.status !== 'completed').length;
-            activeOrdersEl.textContent = activeOrdersCount;
-        }
-        
-        // Get status text in Bengali
-        function getStatusText(status) {
-            switch(status) {
-                case "pending": return "অপেক্ষমান";
-                case "preparing": return "প্রস্তুত হচ্ছে";
-                case "ready": return "প্রস্তুত";
-                case "completed": return "সম্পন্ন";
-                default: return status;
-            }
-        }
-        
-        // Update order status
-        function updateOrderStatus(orderId, newStatus) {
-            const order = orders.find(o => o.id === orderId);
-            if (order) {
-                order.status = newStatus;
-                saveOrders();
-                initOrdersTable();
-                initKitchenView();
-                updateActiveOrdersCount();
-                
-                // Play notification sound
-                playNotificationSound();
-                
-                // Show notification
-                showNotification(`অর্ডার ${orderId} আপডেট করা হয়েছে: ${getStatusText(newStatus)}`);
-            }
-        }
-        
-        // Play notification sound
-        function playNotificationSound() {
-            notificationSound.volume = volumeControl.value / 100;
-            notificationSound.currentTime = 0;
-            notificationSound.play().catch(e => console.log("Audio play failed:", e));
-        }
-        
-        // Show notification
-        function showNotification(message) {
-            notificationCounter++;
-            notificationCount.textContent = notificationCounter;
-            
-            // Create notification
-            if ('Notification' in window) {
-                Notification.requestPermission().then(permission => {
-                    if (permission === 'granted') {
-                        new Notification('স্বাদের রাজ্য', {
-                            body: message,
-                            icon: 'https://cdn-icons-png.flaticon.com/512/857/857718.png'
-                        });
-                    }
-                });
-            }
-        }
-        
-        // Show kitchen notification
-        function showKitchenNotification() {
-            kitchenNotification.classList.add('show');
-            setTimeout(() => {
-                kitchenNotification.classList.remove('show');
-            }, 3000);
-        }
-        
-        // Check for new orders
-        function checkForNewOrders() {
-            const storedOrders = JSON.parse(localStorage.getItem('orders')) || [];
-            
-            // Check for new orders
-            const newOrders = storedOrders.filter(storedOrder => 
-                !orders.some(localOrder => localOrder.id === storedOrder.id)
-            );
-            
-            if (newOrders.length > 0) {
-                // Add new orders to local array
-                orders = [...newOrders, ...orders];
-                saveOrders();
-                
-                // Update views
-                initOrdersTable();
-                initKitchenView();
-                updateActiveOrdersCount();
-                
-                // Notify
-                newOrders.forEach(order => {
-                    playNotificationSound();
-                    showNotification(`নতুন অর্ডার: ${order.id}`);
-                    showKitchenNotification();
-                });
-            }
-        }
-        
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initialize UI
-            initOrdersTable();
-            initKitchenView();
-            showCurrentMenuItems();
-            updateMenuItemsCount();
-            updateActiveOrdersCount();
-            
-            // Navigation click
-            navLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    
-                    // Remove active class from all links
-                    navLinks.forEach(l => l.classList.remove('active'));
-                    
-                    // Add active class to clicked link
-                    link.classList.add('active');
-                    
-                    // Hide all content sections
-                    contentSections.forEach(section => {
-                        section.classList.remove('active');
-                    });
-                    
-                    // Show the selected section
-                    const tab = link.getAttribute('data-tab');
-                    document.getElementById(`${tab}Section`).classList.add('active');
-                });
-            });
-            
-            // Tab click
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    // Remove active class from all tabs
-                    tabs.forEach(t => t.classList.remove('active'));
-                    
-                    // Add active class to clicked tab
-                    tab.classList.add('active');
-                    
-                    // Update active tab
-                    activeTab = tab.getAttribute('data-tab');
-                    
-                    // Update orders table
-                    initOrdersTable();
-                });
-            });
-            
-            // Notification bell click
-            notificationBell.addEventListener('click', () => {
-                notificationCounter = 0;
-                notificationCount.textContent = notificationCounter;
-            });
-            
-            // Menu form submit
-            menuForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                
-                // Get form values
-                const name = document.getElementById('itemName').value;
-                const description = document.getElementById('itemDesc').value;
-                const banglaDesc = document.getElementById('banglaDesc').value;
-                const price = parseInt(document.getElementById('itemPrice').value);
-                const imageUrl = document.getElementById('itemImage').value;
-                
-                // Create new menu item
-                const newItem = {
-                    id: Date.now(),
-                    name: name,
-                    description: description,
-                    price: price,
-                    image: imageUrl,
-                    banglaDesc: banglaDesc
-                };
-                
-                // Add to menu items
-                menuItems.push(newItem);
-                saveMenuItems();
-                
-                // Show success message
-                showNotification(`"${name}" সফলভাবে মেনুতে যোগ করা হয়েছে!`);
-                
-                // Reset form
-                menuForm.reset();
-                
-                // Update UI
-                showCurrentMenuItems();
-                updateMenuItemsCount();
-            });
-            
-            // Sound buttons
-            soundBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    soundBtns.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    
-                    // Update notification sound source
-                    const soundType = btn.getAttribute('data-sound');
-                    notificationSound.src = getSoundSource(soundType);
-                });
-            });
-            
-            // Save settings
-            saveSettings.addEventListener('click', () => {
-                showNotification('সেটিংস সফলভাবে সংরক্ষণ করা হয়েছে!');
-            });
-            
-            // Check for new orders periodically
-            setInterval(checkForNewOrders, 5000);
-            
-            // Request notification permission
-            if ('Notification' in window) {
-                Notification.requestPermission();
+        // Search functionality
+        searchBtn.addEventListener('click', searchProject);
+        clientCodeInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchProject();
             }
         });
-        
-        // Get sound source based on selection
-        function getSoundSource(soundType) {
-            switch(soundType) {
-                case "bell":
-                    return "https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3";
-                case "beep":
-                    return "https://assets.mixkit.co/sfx/preview/mixkit-retro-game-emergency-alarm-1000.mp3";
-                case "ding":
-                    return "https://assets.mixkit.co/sfx/preview/mixkit-magic-sparkles-sound-300.mp3";
-                default:
-                    return "https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3";
+
+        function searchProject() {
+            const clientCode = clientCodeInput.value.trim().toUpperCase();
+            
+            // Reset previous state
+            errorMessage.classList.add('hidden');
+            clientContainer.classList.add('hidden');
+            
+            if (!clientCode) {
+                showError('Please enter a client code');
+                return;
             }
+            
+            if (projects[clientCode]) {
+                displayProject(projects[clientCode]);
+            } else {
+                showError('Client code not found. Please check your code and try again.');
+            }
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.remove('hidden');
+        }
+
+        function displayProject(project) {
+            clientContainer.innerHTML = '';
+            clientContainer.classList.remove('hidden');
+            
+            // Create project card
+            const projectCard = document.createElement('div');
+            projectCard.className = 'client-card';
+            
+            // Create header
+            const header = document.createElement('div');
+            header.className = 'client-header';
+            header.innerHTML = `
+                <div class="client-name">${project.name}</div>
+                <div class="project-id">#${project.id}</div>
+            `;
+            
+            // Create body with status
+            const body = document.createElement('div');
+            body.className = 'client-body';
+            
+            const statusList = document.createElement('ul');
+            statusList.className = 'status-list';
+            
+            project.status.forEach(item => {
+                const statusItem = document.createElement('li');
+                statusItem.className = 'status-item';
+                statusItem.innerHTML = `
+                    <div class="status-icon ${item.status}">${item.icon}</div>
+                    <div class="status-details">
+                        <div class="status-title">${item.title}</div>
+                        <div class="status-value">${item.value}</div>
+                    </div>
+                    <span class="status-badge ${item.status}">${item.status.replace('-', ' ')}</span>
+                `;
+                statusList.appendChild(statusItem);
+            });
+            
+            body.appendChild(statusList);
+            
+            // Create delivery section
+            const deliverySection = document.createElement('div');
+            deliverySection.className = 'delivery-section';
+            deliverySection.innerHTML = '<div class="delivery-title">Delivery Files</div>';
+            
+            const deliveryLinks = document.createElement('div');
+            deliveryLinks.className = 'delivery-links';
+            
+            project.deliveryLinks.forEach(link => {
+                const linkElement = document.createElement('a');
+                linkElement.href = link.disabled ? 'javascript:void(0)' : link.url;
+                linkElement.className = `delivery-link ${link.disabled ? 'disabled' : ''}`;
+                linkElement.innerHTML = `
+                    <span class="link-icon">${link.icon}</span>
+                    <span class="link-text">${link.text}</span>
+                    <span class="link-arrow"><i class="fas fa-chevron-right"></i></span>
+                `;
+                
+                if (link.disabled) {
+                    linkElement.style.opacity = '0.6';
+                    linkElement.style.cursor = 'not-allowed';
+                }
+                
+                deliveryLinks.appendChild(linkElement);
+            });
+            
+            deliverySection.appendChild(deliveryLinks);
+            
+            // Create footer
+            const footer = document.createElement('div');
+            footer.className = 'client-footer';
+            footer.innerHTML = '<button class="btn btn-primary contact-support">Contact Support</button>';
+            
+            // Assemble the card
+            projectCard.appendChild(header);
+            projectCard.appendChild(body);
+            projectCard.appendChild(deliverySection);
+            projectCard.appendChild(footer);
+            
+            // Add to container
+            clientContainer.appendChild(projectCard);
+            
+            // Add event listener to support button
+            document.querySelector('.contact-support').addEventListener('click', function() {
+                alert(`Contacting support for project ${project.id}`);
+            });
         }
     </script>
 </body>
