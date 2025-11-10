@@ -522,10 +522,25 @@
 
             if (!localStorage.getItem('pharmascope_codes')) {
                 const defaultCodes = [
-                    { id: 1, code: "PHARMA2024", status: "unused" },
-                    { id: 2, code: "MED2024XYZ", status: "used" }
+                    { 
+                        id: 1, 
+                        code: "PHARMA2024", 
+                        status: "active", 
+                        used: false, 
+                        created_at: new Date().toISOString(),
+                        ip_restriction: "single",
+                        used_by: null
+                    }
                 ];
                 localStorage.setItem('pharmascope_codes', JSON.stringify(defaultCodes));
+            }
+
+            if (!localStorage.getItem('pharmascope_blocked_ips')) {
+                localStorage.setItem('pharmascope_blocked_ips', JSON.stringify([]));
+            }
+
+            if (!localStorage.getItem('pharmascope_access_log')) {
+                localStorage.setItem('pharmascope_access_log', JSON.stringify([]));
             }
 
             if (!localStorage.getItem('pharmascope_user')) {
@@ -544,6 +559,18 @@
         // Save data to localStorage
         function saveData(key, data) {
             localStorage.setItem(key, JSON.stringify(data));
+        }
+
+        // Get user's IP (demo version)
+        function getUserIP() {
+            const demoIPs = [
+                '192.168.1.101',
+                '192.168.1.102', 
+                '192.168.1.103',
+                '192.168.1.104',
+                '192.168.1.105'
+            ];
+            return demoIPs[Math.floor(Math.random() * demoIPs.length)];
         }
 
         // Load courses on page load
@@ -676,25 +703,65 @@
             }, 3000);
         }
 
-        // Process payment form
+        // PROCESS PAYMENT WITH IP RESTRICTION - UPDATED VERSION
         function processPayment(event) {
             event.preventDefault();
             
             const formData = new FormData(event.target);
             const unlockCode = formData.get('unlock_code');
             const codes = getData('pharmascope_codes');
+            const blockedIPs = getData('pharmascope_blocked_ips');
             
-            // Check if code exists and is unused
-            const codeIndex = codes.findIndex(code => code.code === unlockCode && code.status === 'unused');
+            // Get user's IP
+            const userIP = getUserIP();
+            console.log('User IP:', userIP);
+            
+            // Check if user's IP is blocked
+            if (blockedIPs.includes(userIP)) {
+                showToast('Your IP address is blocked from accessing courses.', 'error');
+                return;
+            }
+            
+            // Check if code exists and is active
+            const codeIndex = codes.findIndex(code => 
+                code.code === unlockCode && 
+                code.status === 'active' && 
+                code.used === false
+            );
             
             if (codeIndex !== -1) {
-                // Mark code as used
+                const code = codes[codeIndex];
+                
+                // Check IP restriction
+                if (code.ip_restriction === 'single') {
+                    if (code.used_by && code.used_by !== userIP) {
+                        showToast('This code has already been used from a different device/IP.', 'error');
+                        return;
+                    }
+                }
+                
+                // Mark code as used and record IP
+                codes[codeIndex].used = true;
                 codes[codeIndex].status = 'used';
+                codes[codeIndex].used_by = userIP;
+                codes[codeIndex].used_at = new Date().toISOString();
                 saveData('pharmascope_codes', codes);
+                
+                // Add to access log
+                const accessLog = getData('pharmascope_access_log');
+                accessLog.push({
+                    code: unlockCode,
+                    ip: userIP,
+                    timestamp: new Date().toISOString(),
+                    action: 'course_access'
+                });
+                saveData('pharmascope_access_log', accessLog);
                 
                 // Update user access
                 const user = JSON.parse(localStorage.getItem('pharmascope_user'));
                 user.unlocked = true;
+                user.access_ip = userIP;
+                user.access_code = unlockCode;
                 localStorage.setItem('pharmascope_user', JSON.stringify(user));
                 
                 // Update buttons
@@ -707,7 +774,7 @@
                     openCourseModal();
                 }, 2000);
             } else {
-                showToast('Invalid or already used unlock code', 'error');
+                showToast('Invalid, inactive, or already used unlock code', 'error');
             }
         }
 
