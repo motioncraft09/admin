@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - PharmaScope</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --dark: #0f172a;
+            --light: #f8fafc;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--light);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(90deg, var(--secondary) 0%, #059669 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link.active::after {
+            width: 100%;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast.success {
+            background: #10b981;
+        }
+        
+        .toast.error {
+            background: #ef4444;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Navigation -->
+    <nav class="glass-card fixed w-full z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2 rounded-lg bg-indigo-500/20">
+                        <i class="fas fa-pills text-xl text-indigo-400"></i>
+                    </div>
+                    <span class="text-2xl font-bold">Pharma<span class="text-indigo-400">Scope</span> <span class="text-sm font-normal text-white/70">Admin</span></span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-white/70 hover:text-white transition">
+                        <i class="fas fa-home text-xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Admin Panel -->
+    <div class="pt-24 pb-12">
+        <div class="container mx-auto px-4">
+            <h1 class="text-4xl font-bold mb-8">Admin <span class="gradient-text">Panel</span></h1>
+            
+            <!-- Tabs -->
+            <div class="flex space-x-1 glass-card p-1 rounded-lg mb-8 max-w-4xl">
+                <button class="nav-link tab-btn py-3 px-6 rounded-md flex-1 text-center transition active" data-tab="courses">
+                    <i class="fas fa-book mr-2"></i> Courses
+                </button>
+                <button class="nav-link tab-btn py-3 px-6 rounded-md flex-1 text-center transition" data-tab="chapters">
+                    <i class="fas fa-folder mr-2"></i> Chapters
+                </button>
+                <button class="nav-link tab-btn py-3 px-6 rounded-md flex-1 text-center transition" data-tab="classes">
+                    <i class="fas fa-play-circle mr-2"></i> Classes
+                </button>
+                <button class="nav-link tab-btn py-3 px-6 rounded-md flex-1 text-center transition" data-tab="tests">
+                    <i class="fas fa-file-alt mr-2"></i> MCQ Tests
+                </button>
+                <button class="nav-link tab-btn py-3 px-6 rounded-md flex-1 text-center transition" data-tab="codes">
+                    <i class="fas fa-key mr-2"></i> Unlock Codes
+                </button>
+            </div>
+            
+            <!-- Tab Contents -->
+            <div class="max-w-4xl">
+                <!-- Courses Tab -->
+                <div id="courses-tab" class="tab-content active">
+                    <div class="glass-card p-6 rounded-2xl mb-6">
+                        <h2 class="text-2xl font-bold mb-6">Add New Course</h2>
+                        <form id="addCourseForm" class="space-y-4">
+                            <div>
+                                <label class="block mb-2">Course Title</label>
+                                <input type="text" id="courseTitle" required 
+                                       class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-indigo-400">
+                            </div>
+                            <div>
+                                <label class="block mb-2">Course Description</label>
+                                <textarea id="courseDescription" rows="3" required
+                                       class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-indigo-400"></textarea>
+                            </div>
+                            <div>
+                                <label class="block mb-2">Thumbnail Image URL</label>
+                                <input type="text" id="courseThumbnail" 
+                                       class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-indigo-400" 
+                                       placeholder="https://example.com/image.jpg">
+                            </div>
+                            <button type="submit" class="btn-primary w-full py-3 rounded-lg font-semibold">
+                                Add Course
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="glass-card p-6 rounded-2xl">
+                        <h2 class="text-2xl font-bold mb-6">Existing Courses</h2>
+                        <div id="coursesList" class="space-y-4">
+                            <!-- Courses will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chapters Tab -->
+                <div id="chapters-tab" class="tab-content">
+                    <div class="glass-card p-6 rounded-2xl mb-6">
+                        <h2 class="text-2xl font-bold mb-6">Add New Chapter</h2>
+                        <form id="addChapterForm" class="space-y-4">
+                            <div>
+                                <label class="block mb-2">Select Course</label>
+                                <select id="chapterCourse" required 
+                                        class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-indigo-400">
+                                    <option value="">Select a course</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block mb-2">Chapter Title</label>
+                                <input type="text" id="chapterTitle" required 
+                                       class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-indigo-400">
+                            </div>
+                            <button type="submit" class="btn-primary w-full py-3 rounded-lg font-semibold">
+                                Add Chapter
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="glass-card p-6 rounded-2xl">
+                        <h2 class="text-2xl font-bold mb-6">Existing Chapters</h2>
+                        <div id="chaptersList" class="space-y-4">
+                            <!-- Chapters will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Classes Tab -->
+                <div id="classes-tab" class="tab-content">
+                    <div class="glass-card p-6 rounded-2xl mb-6">
+                        <h2 class="text-2xl font-bold mb-6">Add New Class</h2>
+                        <form id="addClassForm" class="space-y-4">
+                            <div>
+                                <label class="block mb-2">Select Course</label>
+                                <select id="classCourse" required 
+                                        class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-indigo-400">
+                                    <option value="">Select a course</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block mb-2">Select Chapter</label>
+                                <select id="classChapter" required 
+                                        class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-indigo-400">
+                                    <option value="">Select a chapter</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block mb-2">Class Title</label>
+                                <input type="text" id="className" required 
+                                       class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-indigo-400">
+                            </div>
+                            <div>
+                                <label class="block mb-2">YouTube Video Link</label>
+                                <input type="text" id="classVideo" required 
+                                       class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-indigo-400" 
+                                       placeholder="https://www.youtube.com/watch?v=...">
+                            </div>
+                            <button type="submit" class="btn-primary w-full py-3 rounded-lg font-semibold">
+                                Add Class
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="glass-card p-6 rounded-2xl">
+                        <h2 class="text-2xl font-bold mb-6">Existing Classes</h2>
+                        <div id="classesList" class="space-y-4">
+                            <!-- Classes will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tests Tab -->
+                <div id="tests-tab" class="tab-content">
+                    <div class="glass-card p-6 rounded-2xl mb-6">
+                        <h2 class="text-2xl font-bold mb-6">Add MCQ Test</h2>
+                        <form id="addTestForm" class="space-y-4">
+                            <div>
+                                <label class="block mb-2">Select Course</label>
+                                <select id="testCourse" required 
+                                        class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-indigo-400">
+                                    <option value="">Select a course</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block mb-2">Select Chapter</label>
+                                <select id="testChapter" required 
+                                        class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-indigo-400">
+                                    <option value="">Select a chapter</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block mb-2">Google Form Link</label>
+                                <input type="text" id="testForm" required 
+                                       class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-indigo-400" 
+                                       placeholder="https://forms.google.com/...">
+                            </div>
+                            <button type="submit" class="btn-primary w-full py-3 rounded-lg font-semibold">
+                                Add Test
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="glass-card p-6 rounded-2xl">
+                        <h2 class="text-2xl font-bold mb-6">Existing Tests</h2>
+                        <div id="testsList" class="space-y-4">
+                            <!-- Tests will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Unlock Codes Tab -->
+                <div id="codes-tab" class="tab-content">
+                    <div class="glass-card p-6 rounded-2xl mb-6">
+                        <h2 class="text-2xl font-bold mb-6">Generate Unlock Codes</h2>
+                        <form id="generateCodeForm" class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block mb-2">Number of Codes</label>
+                                    <input type="number" id="codeCount" min="1" max="20" value="1" 
+                                           class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-indigo-400">
+                                </div>
+                                <div>
+                                    <label class="block mb-2">Code Length</label>
+                                    <select id="codeLength" 
+                                            class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-indigo-400">
+                                        <option value="8">8 Characters</option>
+                                        <option value="10">10 Characters</option>
+                                        <option value="12">12 Characters</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary w-full py-3 rounded-lg font-semibold">
+                                Generate Codes
+                            </button>
+                        </form>
+                        
+                        <div id="generatedCodes" class="mt-6 p-4 bg-white/10 rounded-lg hidden">
+                            <h3 class="font-bold mb-4">Newly Generated Codes</h3>
+                            <div id="newCodesList" class="space-y-2">
+                                <!-- New codes will be displayed here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card p-6 rounded-2xl">
+                        <h2 class="text-2xl font-bold mb-6">Existing Codes</h2>
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="text-white/70">
+                                Total: <span id="totalCodes">0</span> | 
+                                Used: <span id="usedCodes">0</span> | 
+                                Available: <span id="availableCodes">0</span>
+                            </div>
+                            <button id="exportCodes" class="btn-secondary px-4 py-2 rounded-lg text-sm">
+                                <i class="fas fa-download mr-2"></i> Export
+                            </button>
+                        </div>
+                        <div id="codesList" class="space-y-2 max-h-96 overflow-y-auto">
+                            <!-- Codes will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <div class="flex items-center">
+            <i class="fas fa-check-circle mr-2"></i>
+            <span id="toastMessage">Operation successful!</span>
+        </div>
+    </div>
+
+    <script>
+        // Initialize data in localStorage if not exists
+        function initializeData() {
+            if (!localStorage.getItem('pharmascope_courses')) {
+                const defaultCourses = [
+                    { 
+                        id: 1, 
+                        title: "Pharmacology Fundamentals", 
+                        description: "Master the basics of drug actions and therapeutic uses",
+                        thumbnail: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        progress: 0
+                    },
+                    { 
+                        id: 2, 
+                        title: "Medicinal Chemistry", 
+                        description: "Understand drug design and chemical properties",
+                        thumbnail: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        progress: 0
+                    },
+                    { 
+                        id: 3, 
+                        title: "Clinical Pharmacy", 
+                        description: "Patient-focused pharmacy practice and care",
+                        thumbnail: "https://images.unsplash.com/photo-1585435557343-3b092031d5ad?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        progress: 0
+                    }
+                ];
+                localStorage.setItem('pharmascope_courses', JSON.stringify(defaultCourses));
+            }
+
+            if (!localStorage.getItem('pharmascope_chapters')) {
+                const defaultChapters = [
+                    { id: 1, course_id: 1, title: "Introduction to Pharmacology", progress: 0 },
+                    { id: 2, course_id: 1, title: "Drug Classification", progress: 0 },
+                    { id: 3, course_id: 1, title: "Pharmacokinetics", progress: 0 },
+                    { id: 4, course_id: 2, title: "Organic Chemistry Basics", progress: 0 },
+                    { id: 5, course_id: 2, title: "Drug Synthesis", progress: 0 },
+                    { id: 6, course_id: 3, title: "Patient Assessment", progress: 0 },
+                    { id: 7, course_id: 3, title: "Medication Management", progress: 0 }
+                ];
+                localStorage.setItem('pharmascope_chapters', JSON.stringify(defaultChapters));
+            }
+
+            if (!localStorage.getItem('pharmascope_classes')) {
+                const defaultClasses = [
+                    { id: 1, chapter_id: 1, title: "What is Pharmacology?", youtube_embed_url: "https://www.youtube.com/embed/dQw4w9WgXcQ", completed: false },
+                    { id: 2, chapter_id: 1, title: "Drug Development Process", youtube_embed_url: "https://www.youtube.com/embed/dQw4w9WgXcQ", completed: false },
+                    { id: 3, chapter_id: 1, title: "Pharmacokinetics Basics", youtube_embed_url: "https://www.youtube.com/embed/dQw4w9WgXcQ", completed: false },
+                    { id: 4, chapter_id: 2, title: "Drug Categories Overview", youtube_embed_url: "https://www.youtube.com/embed/dQw4w9WgXcQ", completed: false },
+                    { id: 5, chapter_id: 2, title: "Analgesics and Anti-inflammatories", youtube_embed_url: "https://www.youtube.com/embed/dQw4w9WgXcQ", completed: false },
+                    { id: 6, chapter_id: 3, title: "Absorption and Distribution", youtube_embed_url: "https://www.youtube.com/embed/dQw4w9WgXcQ", completed: false },
+                    { id: 7, chapter_id: 3, title: "Metabolism and Excretion", youtube_embed_url: "https://www.youtube.com/embed/dQw4w9WgXcQ", completed: false }
+                ];
+                localStorage.setItem('pharmascope_classes', JSON.stringify(defaultClasses));
+            }
+
+            if (!localStorage.getItem('pharmascope_tests')) {
+                const defaultTests = [
+                    { id: 1, chapter_id: 1, google_form_url: "https://forms.google.com/your-test-link-here" },
+                    { id: 2, chapter_id: 2, google_form_url: "https://forms.google.com/your-test-link-here" },
+                    { id: 3, chapter_id: 3, google_form_url: "https://forms.google.com/your-test-link-here" }
+                ];
+                localStorage.setItem('pharmascope_tests', JSON.stringify(defaultTests));
+            }
+
+            if (!localStorage.getItem('pharmascope_codes')) {
+                const defaultCodes = [
+                    { id: 1, code: "PHARMA2024", status: "unused" },
+                    { id: 2, code: "MED2024XYZ", status: "used" }
+                ];
+                localStorage.setItem('pharmascope_codes', JSON.stringify(defaultCodes));
+            }
+        }
+
+        // Get data from localStorage
+        function getData(key) {
+            return JSON.parse(localStorage.getItem(key) || '[]');
+        }
+
+        // Save data to localStorage
+        function saveData(key, data) {
+            localStorage.setItem(key, JSON.stringify(data));
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Tab switching functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeData();
+            loadCoursesTab();
+            
+            // Tab switching
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Update active tab button
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show active tab content
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                    
+                    // Load tab data
+                    if (tabId === 'courses') loadCoursesTab();
+                    else if (tabId === 'chapters') loadChaptersTab();
+                    else if (tabId === 'classes') loadClassesTab();
+                    else if (tabId === 'tests') loadTestsTab();
+                    else if (tabId === 'codes') loadCodesTab();
+                });
+            });
+            
+            // Course form submission
+            document.getElementById('addCourseForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addCourse();
+            });
+            
+            // Chapter form submission
+            document.getElementById('addChapterForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addChapter();
+            });
+            
+            // Class form submission
+            document.getElementById('addClassForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addClass();
+            });
+            
+            // Test form submission
+            document.getElementById('addTestForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addTest();
+            });
+            
+            // Code generation form submission
+            document.getElementById('generateCodeForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                generateCodes();
+            });
+            
+            // Export codes
+            document.getElementById('exportCodes').addEventListener('click', exportCodes);
+            
+            // Update chapter dropdown when course changes
+            document.getElementById('classCourse').addEventListener('change', updateChapterDropdown);
+            document.getElementById('testCourse').addEventListener('change', updateTestChapterDropdown);
+        });
+
+        // Load courses tab
+        function loadCoursesTab() {
+            const courses = getData('pharmascope_courses');
+            const container = document.getElementById('coursesList');
+            
+            if (courses.length === 0) {
+                container.innerHTML = '<p class="text-white/70 text-center py-8">No courses found. Add your first course above.</p>';
+                return;
+            }
+            
+            container.innerHTML = courses.map(course => `
+                <div class="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                    <div class="flex items-center">
+                        <img src="${course.thumbnail}" alt="${course.title}" class="w-16 h-16 object-cover rounded-lg mr-4">
+                        <div>
+                            <h3 class="font-bold">${course.title}</h3>
+                            <p class="text-white/70 text-sm">${course.description}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-white/70 text-sm">${getChaptersCount(course.id)} chapters</span>
+                        <button onclick="deleteCourse(${course.id})" class="text-red-400 hover:text-red-300">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Load chapters tab
+        function loadChaptersTab() {
+            const courses = getData('pharmascope_courses');
+            const chapters = getData('pharmascope_chapters');
+            
+            // Populate course dropdown
+            const courseDropdown = document.getElementById('chapterCourse');
+            courseDropdown.innerHTML = '<option value="">Select a course</option>';
+            courses.forEach(course => {
+                const option = document.createElement('option');
+                option.value = course.id;
+                option.textContent = course.title;
+                courseDropdown.appendChild(option);
+            });
+            
+            // Display chapters
+            const container = document.getElementById('chaptersList');
+            
+            if (chapters.length === 0) {
+                container.innerHTML = '<p class="text-white/70 text-center py-8">No chapters found. Add your first chapter above.</p>';
+                return;
+            }
+            
+            container.innerHTML = chapters.map(chapter => {
+                const course = courses.find(c => c.id === chapter.course_id);
+                return `
+                    <div class="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                        <div>
+                            <h3 class="font-bold">${chapter.title}</h3>
+                            <p class="text-white/70 text-sm">Course: ${course ? course.title : 'Unknown'}</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-white/70 text-sm">${getClassesCount(chapter.id)} classes</span>
+                            <button onclick="deleteChapter(${chapter.id})" class="text-red-400 hover:text-red-300">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Load classes tab
+        function loadClassesTab() {
+            const courses = getData('pharmascope_courses');
+            const classes = getData('pharmascope_classes');
+            const chapters = getData('pharmascope_chapters');
+            
+            // Populate course dropdown
+            const courseDropdown = document.getElementById('classCourse');
+            courseDropdown.innerHTML = '<option value="">Select a course</option>';
+            courses.forEach(course => {
+                const option = document.createElement('option');
+                option.value = course.id;
+                option.textContent = course.title;
+                courseDropdown.appendChild(option);
+            });
+            
+            // Display classes
+            const container = document.getElementById('classesList');
+            
+            if (classes.length === 0) {
+                container.innerHTML = '<p class="text-white/70 text-center py-8">No classes found. Add your first class above.</p>';
+                return;
+            }
+            
+            container.innerHTML = classes.map(cls => {
+                const chapter = chapters.find(c => c.id === cls.chapter_id);
+                const course = chapter ? courses.find(c => c.id === chapter.course_id) : null;
+                return `
+                    <div class="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                        <div>
+                            <h3 class="font-bold">${cls.title}</h3>
+                            <p class="text-white/70 text-sm">
+                                ${course ? course.title : 'Unknown'} > ${chapter ? chapter.title : 'Unknown'}
+                            </p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-white/70 text-sm">${cls.completed ? 'Completed' : 'Not started'}</span>
+                            <button onclick="deleteClass(${cls.id})" class="text-red-400 hover:text-red-300">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Load tests tab
+        function loadTestsTab() {
+            const courses = getData('pharmascope_courses');
+            const tests = getData('pharmascope_tests');
+            const chapters = getData('pharmascope_chapters');
+            
+            // Populate course dropdown
+            const courseDropdown = document.getElementById('testCourse');
+            courseDropdown.innerHTML = '<option value="">Select a course</option>';
+            courses.forEach(course => {
+                const option = document.createElement('option');
+                option.value = course.id;
+                option.textContent = course.title;
+                courseDropdown.appendChild(option);
+            });
+            
+            // Display tests
+            const container = document.getElementById('testsList');
+            
+            if (tests.length === 0) {
+                container.innerHTML = '<p class="text-white/70 text-center py-8">No tests found. Add your first test above.</p>';
+                return;
+            }
+            
+            container.innerHTML = tests.map(test => {
+                const chapter = chapters.find(c => c.id === test.chapter_id);
+                const course = chapter ? courses.find(c => c.id === chapter.course_id) : null;
+                return `
+                    <div class="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                        <div>
+                            <h3 class="font-bold">MCQ Test</h3>
+                            <p class="text-white/70 text-sm">
+                                ${course ? course.title : 'Unknown'} > ${chapter ? chapter.title : 'Unknown'}
+                            </p>
+                            <a href="${test.google_form_url}" target="_blank" class="text-indigo-400 hover:text-indigo-300 text-sm">
+                                ${test.google_form_url}
+                            </a>
+                        </div>
+                        <button onclick="deleteTest(${test.id})" class="text-red-400 hover:text-red-300">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Load codes tab
+        function loadCodesTab() {
+            const codes = getData('pharmascope_codes');
+            const container = document.getElementById('codesList');
+            
+            // Update stats
+            const totalCodes = codes.length;
+            const usedCodes = codes.filter(code => code.status === 'used').length;
+            const availableCodes = totalCodes - usedCodes;
+            
+            document.getElementById('totalCodes').textContent = totalCodes;
+            document.getElementById('usedCodes').textContent = usedCodes;
+            document.getElementById('availableCodes').textContent = availableCodes;
+            
+            if (codes.length === 0) {
+                container.innerHTML = '<p class="text-white/70 text-center py-8">No codes found. Generate your first codes above.</p>';
+                return;
+            }
+            
+            container.innerHTML = codes.map(code => `
+                <div class="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+                    <div class="flex items-center">
+                        <span class="font-mono bg-white/10 px-2 py-1 rounded mr-3">${code.code}</span>
+                        <span class="${code.status === 'used' ? 'text-red-400' : 'text-green-400'} text-sm">
+                            ${code.status === 'used' ? 'Used' : 'Available'}
+                        </span>
+                    </div>
+                    <button onclick="deleteCode(${code.id})" class="text-red-400 hover:text-red-300">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Helper functions
+        function getChaptersCount(courseId) {
+            const chapters = getData('pharmascope_chapters');
+            return chapters.filter(chapter => chapter.course_id === courseId).length;
+        }
+
+        function getClassesCount(chapterId) {
+            const classes = getData('pharmascope_classes');
+            return classes.filter(cls => cls.chapter_id === chapterId).length;
+        }
+
+        function updateChapterDropdown() {
+            const courseId = document.getElementById('classCourse').value;
+            const chapterDropdown = document.getElementById('classChapter');
+            const chapters = getData('pharmascope_chapters');
+            
+            chapterDropdown.innerHTML = '<option value="">Select a chapter</option>';
+            
+            if (courseId) {
+                const courseChapters = chapters.filter(chapter => chapter.course_id == courseId);
+                courseChapters.forEach(chapter => {
+                    const option = document.createElement('option');
+                    option.value = chapter.id;
+                    option.textContent = chapter.title;
+                    chapterDropdown.appendChild(option);
+                });
+            }
+        }
+
+        function updateTestChapterDropdown() {
+            const courseId = document.getElementById('testCourse').value;
+            const chapterDropdown = document.getElementById('testChapter');
+            const chapters = getData('pharmascope_chapters');
+            
+            chapterDropdown.innerHTML = '<option value="">Select a chapter</option>';
+            
+            if (courseId) {
+                const courseChapters = chapters.filter(chapter => chapter.course_id == courseId);
+                courseChapters.forEach(chapter => {
+                    const option = document.createElement('option');
+                    option.value = chapter.id;
+                    option.textContent = chapter.title;
+                    chapterDropdown.appendChild(option);
+                });
+            }
+        }
+
+        // Add functions
+        function addCourse() {
+            const title = document.getElementById('courseTitle').value;
+            const description = document.getElementById('courseDescription').value;
+            const thumbnail = document.getElementById('courseThumbnail').value;
+            
+            const courses = getData('pharmascope_courses');
+            const newCourse = {
+                id: courses.length > 0 ? Math.max(...courses.map(c => c.id)) + 1 : 1,
+                title: title,
+                description: description,
+                thumbnail: thumbnail || 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                progress: 0
+            };
+            
+            courses.push(newCourse);
+            saveData('pharmascope_courses', courses);
+            
+            document.getElementById('addCourseForm').reset();
+            loadCoursesTab();
+            showToast('Course added successfully!');
+        }
+
+        function addChapter() {
+            const courseId = document.getElementById('chapterCourse').value;
+            const title = document.getElementById('chapterTitle').value;
+            
+            if (!courseId) {
+                showToast('Please select a course', 'error');
+                return;
+            }
+            
+            const chapters = getData('pharmascope_chapters');
+            const newChapter = {
+                id: chapters.length > 0 ? Math.max(...chapters.map(c => c.id)) + 1 : 1,
+                course_id: parseInt(courseId),
+                title: title,
+                progress: 0
+            };
+            
+            chapters.push(newChapter);
+            saveData('pharmascope_chapters', chapters);
+            
+            document.getElementById('addChapterForm').reset();
+            loadChaptersTab();
+            showToast('Chapter added successfully!');
+        }
+
+        function addClass() {
+            const chapterId = document.getElementById('classChapter').value;
+            const title = document.getElementById('className').value;
+            const videoUrl = document.getElementById('classVideo').value;
+            
+            if (!chapterId) {
+                showToast('Please select a chapter', 'error');
+                return;
+            }
+            
+            // Convert YouTube URL to embed format
+            let embedUrl = videoUrl;
+            if (videoUrl.includes('youtube.com/watch?v=')) {
+                const videoId = videoUrl.split('v=')[1];
+                embedUrl = `https://www.youtube.com/embed/${videoId}`;
+            }
+            
+            const classes = getData('pharmascope_classes');
+            const newClass = {
+                id: classes.length > 0 ? Math.max(...classes.map(c => c.id)) + 1 : 1,
+                chapter_id: parseInt(chapterId),
+                title: title,
+                youtube_embed_url: embedUrl,
+                completed: false
+            };
+            
+            classes.push(newClass);
+            saveData('pharmascope_classes', classes);
+            
+            document.getElementById('addClassForm').reset();
+            loadClassesTab();
+            showToast('Class added successfully!');
+        }
+
+        function addTest() {
+            const chapterId = document.getElementById('testChapter').value;
+            const formUrl = document.getElementById('testForm').value;
+            
+            if (!chapterId) {
+                showToast('Please select a chapter', 'error');
+                return;
+            }
+            
+            const tests = getData('pharmascope_tests');
+            const newTest = {
+                id: tests.length > 0 ? Math.max(...tests.map(t => t.id)) + 1 : 1,
+                chapter_id: parseInt(chapterId),
+                google_form_url: formUrl
+            };
+            
+            tests.push(newTest);
+            saveData('pharmascope_tests', tests);
+            
+            document.getElementById('addTestForm').reset();
+            loadTestsTab();
+            showToast('MCQ Test added successfully!');
+        }
+
+        function generateCodes() {
+            const count = parseInt(document.getElementById('codeCount').value);
+            const length = parseInt(document.getElementById('codeLength').value);
+            
+            const codes = getData('pharmascope_codes');
+            const newCodes = [];
+            
+            for (let i = 0; i < count; i++) {
+                const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                let result = '';
+                for (let j = 0; j < length; j++) {
+                    result += characters.charAt(Math.floor(Math.random() * characters.length));
+                }
+                
+                newCodes.push({
+                    id: codes.length > 0 ? Math.max(...codes.map(c => c.id)) + 1 + i : 1 + i,
+                    code: result,
+                    status: 'unused'
+                });
+            }
+            
+            // Add new codes to existing ones
+            codes.push(...newCodes);
+            saveData('pharmascope_codes', codes);
+            
+            // Display new codes
+            const container = document.getElementById('newCodesList');
+            container.innerHTML = newCodes.map(code => `
+                <div class="flex items-center justify-between p-2 bg-white/10 rounded">
+                    <span class="font-mono">${code.code}</span>
+                    <span class="text-green-400 text-sm">Available</span>
+                </div>
+            `).join('');
+            
+            document.getElementById('generatedCodes').classList.remove('hidden');
+            loadCodesTab();
+            showToast(`${count} new codes generated successfully!`);
+        }
+
+        // Delete functions
+        function deleteCourse(id) {
+            if (!confirm('Are you sure you want to delete this course? This will also delete all associated chapters and classes.')) {
+                return;
+            }
+            
+            const courses = getData('pharmascope_courses');
+            const filteredCourses = courses.filter(course => course.id !== id);
+            saveData('pharmascope_courses', filteredCourses);
+            
+            // Also delete associated chapters and classes
+            const chapters = getData('pharmascope_chapters');
+            const filteredChapters = chapters.filter(chapter => chapter.course_id !== id);
+            saveData('pharmascope_chapters', filteredChapters);
+            
+            const chapterIds = chapters.filter(chapter => chapter.course_id === id).map(chapter => chapter.id);
+            const classes = getData('pharmascope_classes');
+            const filteredClasses = classes.filter(cls => !chapterIds.includes(cls.chapter_id));
+            saveData('pharmascope_classes', filteredClasses);
+            
+            loadCoursesTab();
+            showToast('Course deleted successfully!');
+        }
+
+        function deleteChapter(id) {
+            if (!confirm('Are you sure you want to delete this chapter? This will also delete all associated classes.')) {
+                return;
+            }
+            
+            const chapters = getData('pharmascope_chapters');
+            const filteredChapters = chapters.filter(chapter => chapter.id !== id);
+            saveData('pharmascope_chapters', filteredChapters);
+            
+            // Also delete associated classes
+            const classes = getData('pharmascope_classes');
+            const filteredClasses = classes.filter(cls => cls.chapter_id !== id);
+            saveData('pharmascope_classes', filteredClasses);
+            
+            loadChaptersTab();
+            showToast('Chapter deleted successfully!');
+        }
+
+        function deleteClass(id) {
+            if (!confirm('Are you sure you want to delete this class?')) {
+                return;
+            }
+            
+            const classes = getData('pharmascope_classes');
+            const filteredClasses = classes.filter(cls => cls.id !== id);
+            saveData('pharmascope_classes', filteredClasses);
+            
+            loadClassesTab();
+            showToast('Class deleted successfully!');
+        }
+
+        function deleteTest(id) {
+            if (!confirm('Are you sure you want to delete this test?')) {
+                return;
+            }
+            
+            const tests = getData('pharmascope_tests');
+            const filteredTests = tests.filter(test => test.id !== id);
+            saveData('pharmascope_tests', filteredTests);
+            
+            loadTestsTab();
+            showToast('Test deleted successfully!');
+        }
+
+        function deleteCode(id) {
+            if (!confirm('Are you sure you want to delete this code?')) {
+                return;
+            }
+            
+            const codes = getData('pharmascope_codes');
+            const filteredCodes = codes.filter(code => code.id !== id);
+            saveData('pharmascope_codes', filteredCodes);
+            
+            loadCodesTab();
+            showToast('Code deleted successfully!');
+        }
+
+        function exportCodes() {
+            const codes = getData('pharmascope_codes');
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + "Code,Status\n" 
+                + codes.map(code => `${code.code},${code.status}`).join("\n");
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "pharmascope_codes.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showToast('Codes exported successfully!');
+        }
+    </script>
+</body>
+</html>
